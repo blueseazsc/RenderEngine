@@ -1,11 +1,15 @@
 #include <SDL.h>
 #include "config.h"
 
+#include "raster.h"
+
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRender = NULL;
 SDL_Texture* gTexture = NULL;
 SDL_Event event;
 SDL_PixelFormat* format;
+
+render::Raster raster;
 
 void init()
 {
@@ -53,9 +57,16 @@ int main()
 	return 0;
 }
 
+/*
 void render(void* pixel, int pitch) 
 {
-	Uint32 color = SDL_MapRGBA(format, 0xff, 0, 0, 0xff / 3);
+	uint32 color = sdl_maprgba(format, 0xff, 0, 0, 0xff / 3);
 	for(int i = 0; i < pitch * 400 / 4; i++)
-		((Uint32*)pixel)[i] = color;
+		((uint32*)pixel)[i] = color;
+}
+*/
+
+void render(void* pixel, int pitch) 
+{
+	uint32 color = sdl_maprgba(format, 0xff, 0, 0, 0xff / 3);
 }
