@@ -1,9 +1,7 @@
 cmake_minimum_required( VERSION 2.8 )
 project( RenderEngine )
 
-add_executable( main src/main.cpp )
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O0 -g -ggdb")
 
 find_package(PkgConfig)
 
@@ -15,6 +13,7 @@ message(STATUS "ldflag other = ${SDL2_LDFLAGS_OTHER}")
 message(STATUS "cflag = ${SDL2_CFLAGS}")
 message(STATUS "cflag other = ${SDL2_CFLAGS_OTHER}")
 
-target_include_directories(main PUBLIC ${SDL2_INCLUDE_DIRS})
-target_compile_options(main PUBLIC ${SDL2_CFLAGS_OTHER})
-target_link_libraries(main ${SDL2_LDFLAGS})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+add_subdirectory(src)

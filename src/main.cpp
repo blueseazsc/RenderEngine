@@ -1,13 +1,15 @@
 #include "app.h"
+#include "math.h"
 
 class Test:	public Application
 {
 public:
-	virtual void render(void* pixel, int pitch) 
+	virtual void render() 
     {
-		Uint32 color = SDL_MapRGBA(format, 0xff, 0, 0, 0xff / 3);
-		for(int i = 0; i < pitch * 400 / 4; i++)
-			((Uint32*)pixel)[i] = color;
+		for (int32 i = 0; i < 100; ++i)
+		{
+			_gRaster.drawPoint(rand()%_info.winWidth,rand()%_info.winHeight,render::Rgba(255,0,0),2);
+		}
     }
 };
 
