@@ -1,6 +1,7 @@
 #ifndef RENDER_MATH_H 
 #define RENDER_MATH_H
 
+#include <Eigen/Core>
 #include "config.h"
 
 namespace render {
@@ -56,5 +57,7 @@ inline Rgba4Byte colorLerp(const Rgba4Byte& c1, const Rgba4Byte& c2, float s)
 	color._a = (uint8)(c1._a + s * ( c2._a - c1._a ));
 	return color;
 }
+
+typedef Eigen::Vector2f float2;
 }
 #endif
