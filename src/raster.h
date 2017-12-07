@@ -15,6 +15,73 @@ enum DrawMode {
 	DM_LINE_STRIP	= 3,
 };
 
+class Span {
+public:
+	int32 _xStart;
+	int32 _xEnd;
+
+	Rgba _colorStart;
+	Rgba _colorEnd;
+
+	int32 _y;
+public:
+	Span(int32 xStart, int32 xEnd, Rgba colorStart, Rgba colorEnd, int32 y)
+	{
+		if ( xStart < xEnd ) {
+			_xStart = xStart;
+			_xEnd = xEnd;
+
+			_colorStart = colorStart;
+			_colorEnd = colorEnd;
+
+			_y = y;
+		}
+		else
+		{
+			_xStart = xEnd;
+			_xEnd = xStart;
+
+			_colorStart = colorEnd;
+			_colorEnd = colorStart;
+
+			_y = y;
+		}
+	}
+};
+
+class Edge {
+public:
+	int32 _x1;
+	int32 _y1;
+	Rgba _color1;
+
+	int32 _x2;
+	int32 _y2;
+	Rgba _color2;
+public:
+	Edge(int32 x1, int32 y1, Rgba color1, int32 x2, int32 y2, Rgba color2)
+	{
+		if ( y1 < y2 ) {
+			_x1 	= x1;
+			_y1		= y1;
+			_color1	= color1;
+
+			_x2		= x2;
+			_y2		= y2;
+			_color2	= color2;
+		}
+		else {
+			_x1 	= x2;
+			_y1		= y2;
+			_color1	= color2;
+
+			_x2		= x1;
+			_y2		= y1;
+			_color2	= color1;
+		}
+	}
+};
+
 class Raster {
 public:
 	typedef Uint32 BufferType;
@@ -42,6 +109,12 @@ public:
 	 *	3 <- 2
 	 */
 	void drawRect(const Point2i* points,const Rgba* colors);
+
+	void drawTriangle(const Point2i* points,const Rgba* colors);
+	// |y2 - y1| in e1 >= |y2 - y1| in e2
+	void drawEdge(const Edge& e1, const Edge& e2);
+
+	void drawSpan(const Span& span);
 private:
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);

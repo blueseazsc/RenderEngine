@@ -148,3 +148,65 @@ void Raster::drawArrays(DrawMode mode, const Point2f* points, int32 count)
 			break;
 	}
 }
+void Raster::drawTriangle(const Point2i* points,const Rgba* colors)
+{
+	Edge edges[3] = {
+		Edge(points[0].x(), points[0].y(), colors[0], points[1].x(), points[1].y(), colors[1]),
+		Edge(points[1].x(), points[1].y(), colors[1], points[2].x(), points[2].y(), colors[2]),
+		Edge(points[2].x(), points[2].y(), colors[2], points[0].x(), points[0].y(), colors[0]),
+	};
+
+	int32 iMax = 0;
+	int32 lMax = 0;
+	for(int32_t i = 0; i < 3; ++i) {
+		if ( edges[i]._y2 - edges[i]._y1 > lMax ) {
+			lMax = edges[i]._y2 - edges[i]._y1;
+			iMax = i;
+		}
+	}
+
+	int32 iShort1 = (iMax + 1) % 3;
+	int32 iShort2 = (iMax + 2) % 3;
+
+	drawEdge(edges[iMax], edges[iShort1]);
+	drawEdge(edges[iMax], edges[iShort2]);
+}
+void Raster::drawEdge(const Edge& e1, const Edge& e2)
+{
+	float xOffset1 = e1._x2 - e1._x1;
+	float yOffset1 = e1._y2 - e1._y1;
+
+	float xOffset2 = e2._x2 - e2._x1;
+	float yOffset2 = e2._y2 - e2._y1;
+
+	if ( yOffset1 == 0 || yOffset2 == 0 )
+		return;
+		
+	float scale1 = (e2._y1 - e1._y1) / yOffset1;
+	float step1 = 1.f / yOffset1; 
+
+	float scale2 = 0;
+	float step2 = 1.f / yOffset2; 
+
+	for(int32 y = e2._y1; y < e2._y2; ++y) {
+		int32 x1 = e1._x1 + (int32)(scale1 * xOffset1);
+		int32 x2 = e2._x1 + (int32)(scale2 * xOffset2);
+
+		Rgba color1 = colorLerp(e1._color1, e1._color2, scale1);
+		Rgba color2 = colorLerp(e2._color1, e2._color2, scale2);
+
+		Span span(e1._x1, e2._x1, color1, color2, y);
+		drawSpan(span);
+
+		scale1 += step1;
+		scale2 += step2;
+	} 
+}
+void Raster::drawSpan(const Span& span)
+{
+	float length = span._xEnd - span._xStart;
+	for(int32 x = span._xStart; x <= span._xEnd; ++x) {
+		Rgba color = colorLerp(span._colorStart, span._colorEnd, ( x - span._xStart ) / length );
+		setPixel(x, span._y, color);
+	}
+}
