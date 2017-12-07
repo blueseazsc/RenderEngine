@@ -6,6 +6,11 @@
 
 namespace render {
 
+#define PI                      3.14159265358979323
+#define TWO_PI                  6.28318530717958647
+#define HALF_PI                 1.57079632679489661
+#define DEG2RAD(theta)          (0.01745329251994329 * (theta))
+
 class Rgba4Byte {
 public:
 	Rgba4Byte(
@@ -58,6 +63,6 @@ inline Rgba4Byte colorLerp(const Rgba4Byte& c1, const Rgba4Byte& c2, float s)
 	return color;
 }
 
-typedef Eigen::Vector2f float2;
+typedef Eigen::Vector2f Point2f;
 }
 #endif
