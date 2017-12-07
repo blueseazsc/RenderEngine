@@ -32,9 +32,23 @@ public:
 	void drawArrays(DrawMode mode, const Point2f* points, int32 count);
 
 	void drawPoint(int32 x, int32 y, Rgba color, int32 ptSize);
+
+	void drawFilleRect(int32 startX,int32 startY,int32 w,int32 h);
+
+	/*
+	 *  drawRect points and colors sequence:
+	 *	0 -> 1
+	 *		 |
+	 *	3 <- 2
+	 */
+	void drawRect(const Point2i* points,const Rgba* colors);
 private:
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);
+	inline void setPixelEx(uint32 x, uint32 y, Rgba color) 
+	{
+		_buffer[y * _width + x] = SDL_MapRGBA(_colorFormat, color._r, color._g, color._b, color._a);
+	}
 	inline void setPixel(uint32 x, uint32 y, Rgba color) 
 	{
 		if ( x >= _width || y >= _height )

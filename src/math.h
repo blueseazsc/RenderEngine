@@ -64,5 +64,6 @@ inline Rgba4Byte colorLerp(const Rgba4Byte& c1, const Rgba4Byte& c2, float s)
 }
 
 typedef Eigen::Vector2f Point2f;
+typedef Eigen::Vector2i Point2i;
 }
 #endif

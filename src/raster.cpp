@@ -34,6 +34,43 @@ void Raster::drawPoint(int32 x, int32 y, Rgba color, int32 ptSize)
 			break;
 	}
 }
+void Raster::drawFilleRect(int32 startX,int32 startY,int32 w,int32 h)
+{
+	int32 left = std::max(startX, 0);
+	int32 top = std::max(startY, 0);
+
+	int32 right = std::min(startX + w, _width);
+	int32 bottom = std::min(startY + h, _height);
+
+	for(int32 x = left; x < right; ++x) 
+	{
+		for(int32 y = top; y < bottom; ++y)
+		{
+			setPixelEx(x, y, _color);
+		}
+	}
+}
+void Raster::drawRect(const Point2i* points,const Rgba* colors)
+{
+	int32 left = std::max(points[0].x(), 0);
+	int32 top = std::max(points[0].y(), 0);
+
+	int32 right = std::min(points[2].x(), _width);
+	int32 bottom = std::min(points[2].y(), _height);
+
+	float w = right - left;
+	float h = bottom - top;
+	for(int32 x = left; x < right; ++x) 
+	{
+		Rgba color1 = colorLerp(colors[0], colors[1], ( x - left ) / w);
+		Rgba color2 = colorLerp(colors[3], colors[2], ( x - left ) / w);
+		for(int32 y = top; y < bottom; ++y)
+		{
+			Rgba color = colorLerp(color1, color2, ( y - top ) / h);
+			setPixelEx(x, y, color);
+		}
+	}
+}
 void Raster::drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2)
 {
 	float xOffset = p1.x() - p2.x();
