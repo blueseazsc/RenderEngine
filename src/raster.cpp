@@ -195,7 +195,7 @@ void Raster::drawEdge(const Edge& e1, const Edge& e2)
 		Rgba color1 = colorLerp(e1._color1, e1._color2, scale1);
 		Rgba color2 = colorLerp(e2._color1, e2._color2, scale2);
 
-		Span span(e1._x1, e2._x1, color1, color2, y);
+		Span span(x1, x2, color1, color2, y);
 		drawSpan(span);
 
 		scale1 += step1;
