@@ -5,7 +5,8 @@ cmake_minimum_required( VERSION 2.8 )
 
 project( RenderEngine )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O0 -g -ggdb")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb -std=c++11")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11")
 
 find_package(PkgConfig)
 find_package( Eigen3 REQUIRED )

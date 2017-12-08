@@ -182,31 +182,45 @@ void Raster::drawEdge(const Edge& e1, const Edge& e2)
 	if ( yOffset1 == 0 || yOffset2 == 0 )
 		return;
 		
-	float scale1 = (e2._y1 - e1._y1) / yOffset1;
-	float step1 = 1.f / yOffset1; 
+	float colorStep1 = 1.f / yOffset1; 
+	float colorScale1 = (e2._y1 - e1._y1) * colorStep1;
 
-	float scale2 = 0;
-	float step2 = 1.f / yOffset2; 
+	float colorStep2 = 1.f / yOffset2; 
+	float colorScale2 = 0;
+
+	float xStep1 = xOffset1 / yOffset1; 
+	float xScale1 = (e2._y1 - e1._y1) * xStep1;
+
+	float xStep2 = xOffset2 / yOffset2; 
+	float xScale2 = 0;
 
 	for(int32 y = e2._y1; y < e2._y2; ++y) {
-		int32 x1 = e1._x1 + (int32)(scale1 * xOffset1);
-		int32 x2 = e2._x1 + (int32)(scale2 * xOffset2);
+		int32 x1 = e1._x1 + (int32)(xScale1);
+		int32 x2 = e2._x1 + (int32)(xScale2);
 
-		Rgba color1 = colorLerp(e1._color1, e1._color2, scale1);
-		Rgba color2 = colorLerp(e2._color1, e2._color2, scale2);
+		Rgba color1 = colorLerp(e1._color1, e1._color2, colorScale1);
+		Rgba color2 = colorLerp(e2._color1, e2._color2, colorScale2);
 
 		Span span(x1, x2, color1, color2, y);
 		drawSpan(span);
 
-		scale1 += step1;
-		scale2 += step2;
+		colorScale1 += colorStep1;
+		colorScale2 += colorStep2;
+
+		xScale1 += xStep1;
+		xScale2 += xStep2;
 	} 
 }
 void Raster::drawSpan(const Span& span)
 {
 	float length = span._xEnd - span._xStart;
+
+	float step = 1.f / length;
+	float scale = 0;
 	for(int32 x = span._xStart; x <= span._xEnd; ++x) {
-		Rgba color = colorLerp(span._colorStart, span._colorEnd, ( x - span._xStart ) / length );
-		setPixel(x, span._y, color);
+		Rgba color = colorLerp(span._colorStart, span._colorEnd, scale );
+		setPixelEx(x, span._y, color);
+
+		scale += step;
 	}
 }

@@ -1,5 +1,8 @@
 #include "app.h"
 #include "math.h"
+#include "tictoc.h"
+
+#include <stdio.h>
 
 class Test:	public Application
 {
@@ -21,7 +24,14 @@ public:
 
 		};
 
-		_gRaster.drawTriangle(pt, colors);
+		framework::Timestamp ts;
+
+		ts.update();
+
+		for(int32 i = 0; i < 1000; ++i)
+			_gRaster.drawTriangle(pt, colors);
+
+		printf("%lld\n", ts.getElapsedMicroSec());
     }
 };
 

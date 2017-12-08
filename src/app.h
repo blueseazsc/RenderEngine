@@ -49,6 +49,8 @@ public:
 
 			SDL_RenderCopy(_gRender, _gTexture, NULL, NULL);
 			SDL_RenderPresent(_gRender);
+
+			postRender();
         } while (running);
 
         shutdown();
@@ -74,6 +76,11 @@ public:
     }
 
 	virtual void render() 
+    {
+
+    }
+
+	virtual void postRender() 
     {
 
     }
