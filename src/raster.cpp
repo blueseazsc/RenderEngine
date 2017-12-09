@@ -150,6 +150,9 @@ void Raster::drawArrays(DrawMode mode, const Point2f* points, int32 count)
 }
 void Raster::drawTriangle(const Point2i* points,const Rgba* colors)
 {
+	// if ( !isInRect(points[0]) && !isInRect(points[1]) && !isInRect(points[2])) 
+		// return;
+
 	Edge edges[3] = {
 		Edge(points[0].x(), points[0].y(), colors[0], points[1].x(), points[1].y(), colors[1]),
 		Edge(points[1].x(), points[1].y(), colors[1], points[2].x(), points[2].y(), colors[2]),
@@ -185,16 +188,28 @@ void Raster::drawEdge(const Edge& e1, const Edge& e2)
 	float colorStep1 = 1.f / yOffset1; 
 	float colorScale1 = (e2._y1 - e1._y1) * colorStep1;
 
-	float colorStep2 = 1.f / yOffset2; 
-	float colorScale2 = 0;
-
 	float xStep1 = xOffset1 / yOffset1; 
 	float xScale1 = (e2._y1 - e1._y1) * xStep1;
+
+	int32 startY1 = std::max(e1._y1, 0);
+	int32 endY1 = std::min(e1._y2, _height);
+
+	colorScale1 += (startY1 - e1._y1) * colorStep1; 
+	xScale1 += (startY1 - e1._y1) * xStep1;
+
+	float colorStep2 = 1.f / yOffset2; 
+	float colorScale2 = 0;
 
 	float xStep2 = xOffset2 / yOffset2; 
 	float xScale2 = 0;
 
-	for(int32 y = e2._y1; y < e2._y2; ++y) {
+	int32 startY2 = std::max(e2._y1, 0);
+	int32 endY2 = std::min(e2._y2, _height);
+
+	colorScale2 += (startY2 - e2._y1) * colorStep1; 
+	xScale2 += (startY2 - e2._y1) * xStep1;
+
+	for(int32 y = startY2; y < endY2; ++y) {
 		int32 x1 = e1._x1 + (int32)(xScale1);
 		int32 x2 = e2._x1 + (int32)(xScale2);
 
@@ -217,7 +232,12 @@ void Raster::drawSpan(const Span& span)
 
 	float step = 1.f / length;
 	float scale = 0;
-	for(int32 x = span._xStart; x <= span._xEnd; ++x) {
+	
+	int32 startX = std::max(span._xStart, 0);
+	int32 endX = std::min(span._xEnd, _width);
+	scale += (startX - span._xStart) * step;
+
+	for(int32 x = startX; x <= endX; ++x) {
 		Rgba color = colorLerp(span._colorStart, span._colorEnd, scale );
 		setPixelEx(x, span._y, color);
 

@@ -11,9 +11,9 @@ public:
     {
 		render::Point2i pt[]    =
 		{
-			render::Point2i(100,10),
-			render::Point2i(10,100),
-			render::Point2i(200,100),
+			render::Point2i(400,-200),
+			render::Point2i(-300,800),
+			render::Point2i(1100,800),
 		};
 
 		render::Rgba  colors[]    =
@@ -28,7 +28,7 @@ public:
 
 		ts.update();
 
-		for(int32 i = 0; i < 1000; ++i)
+		for(int32 i = 0; i < 100; ++i)
 			_gRaster.drawTriangle(pt, colors);
 
 		printf("%lld\n", ts.getElapsedMicroSec());
