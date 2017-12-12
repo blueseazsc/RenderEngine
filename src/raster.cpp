@@ -244,3 +244,20 @@ void Raster::drawSpan(const Span& span)
 		scale += step;
 	}
 }
+void Raster::drawImage(int32 startX, int32 startY, int32 w, int32 h) 
+{
+	int32 left = std::max(startX, 0);
+	int32 top = std::max(startY, 0);
+
+	int32 right = std::min(startX + w, _width);
+	int32 bottom = std::min(startY + h, _height);
+
+	for(int32 x = left; x < right; ++x) 
+	{
+		for(int32 y = top; y < bottom; ++y)
+		{
+			Rgba color = Rgba(rand()%256,rand()%256,rand()%256);
+			setPixelEx(x, y, color);
+		}
+	}
+}

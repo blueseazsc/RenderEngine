@@ -118,6 +118,8 @@ public:
 	void drawEdge(const Edge& e1, const Edge& e2);
 
 	void drawSpan(const Span& span);
+
+	void drawImage(int32 startX, int32 startY, int32 w, int32 h);
 private:
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);

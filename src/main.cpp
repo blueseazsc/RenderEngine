@@ -21,6 +21,7 @@ public:
 	}
 	virtual void render() 
     {
+		_gRaster.drawImage(100, 100, 200, 200);
     }
 	virtual void shutdown() 
 	{
