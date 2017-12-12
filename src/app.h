@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include "config.h"
 #include "raster.h"
+#include <iostream>
 
 class Application
 {
@@ -22,17 +23,34 @@ public:
         init();
 
 		_gWindow = SDL_CreateWindow(_info.title, 100, 100, _info.winWidth, _info.winHeight, SDL_WINDOW_SHOWN);
+		if ( _gWindow == nullptr ) {
+			std::cerr << SDL_GetError() << std::endl;
+			return;
+		}
 
 		_gRender = SDL_CreateRenderer(_gWindow, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+		if ( _gRender == nullptr ) {
+			std::cerr << SDL_GetError() << std::endl;
+			return;
+		}
 
 		//创建texture,注意像素格式和访问方式
 		_gTexture = SDL_CreateTexture(_gRender, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, _info.winWidth, _info.winHeight);
+		if ( _gTexture == nullptr ) {
+			std::cerr << SDL_GetError() << std::endl;
+			return;
+		}
 
 		_gFormat = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+		if ( _gFormat == nullptr ) {
+			std::cerr << SDL_GetError() << std::endl;
+			return;
+		}
 
 		_gRaster.setInfo(_info.winWidth, _info.winHeight, _gFormat);
 
-        startup();
+        if ( !startup() )
+			return;
 
 		void* pix;
 		int32 pitch;
@@ -70,9 +88,9 @@ public:
         _info.winHeight = 600;
     }
 
-    virtual void startup()
+    virtual bool startup()
     {
-
+		return true;
     }
 
 	virtual void render() 

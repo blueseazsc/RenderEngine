@@ -2,37 +2,32 @@
 #include "math.h"
 #include "tictoc.h"
 
+#include "SDL_image.h"
+
 #include <stdio.h>
 
 class Test:	public Application
 {
 public:
+	virtual bool startup() 
+	{
+		_texture = IMG_LoadTexture(_gRender, "/Users/zhangsc/Downloads/image/1.jpg");
+		if (_texture == nullptr){
+			std::cerr << SDL_GetError() << std::endl;
+			return false;
+		}
+
+		return true;
+	}
 	virtual void render() 
     {
-		render::Point2i pt[]    =
-		{
-			render::Point2i(100,10),
-			render::Point2i(10,100),
-			render::Point2i(200,100),
-		};
-
-		render::Rgba  colors[]    =
-		{
-			render::Rgba(255,0,0),
-			render::Rgba(0,255,0),
-			render::Rgba(0,0,255),
-
-		};
-
-		framework::Timestamp ts;
-
-		ts.update();
-
-		for(int32 i = 0; i < 1000; ++i)
-			_gRaster.drawTriangle(pt, colors);
-
-		printf("%lld\n", ts.getElapsedMicroSec());
     }
+	virtual void shutdown() 
+	{
+		SDL_DestroyTexture(_texture);
+	}
+protected:
+	SDL_Texture *_texture = nullptr;
 };
 
 DECLARE_MAIN(Test);
