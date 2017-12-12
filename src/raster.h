@@ -110,6 +110,9 @@ public:
 	 */
 	void drawRect(const Point2i* points,const Rgba* colors);
 
+	inline bool isInRect(const Point2i& point) {
+		return point.x() >= 0 && point.x() <= _width && point.y() >= 0 && point.y() <= _height;
+	}
 	void drawTriangle(const Point2i* points,const Rgba* colors);
 	// |y2 - y1| in e1 >= |y2 - y1| in e2
 	void drawEdge(const Edge& e1, const Edge& e2);
