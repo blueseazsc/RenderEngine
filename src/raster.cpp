@@ -5,7 +5,7 @@ using namespace render;
 
 Image* Image::loadFromFile(SDL_PixelFormat* format, const char* fileName)
 {
-	SDL_Surface *surface = IMG_Load("/Users/zhangsc/Downloads/image/1.jpg");
+	SDL_Surface *surface = IMG_Load(fileName);
 	if (surface == nullptr)
 	{
 		std::cerr << SDL_GetError() << std::endl;
@@ -36,6 +36,8 @@ Image* Image::loadFromFile(SDL_PixelFormat* format, const char* fileName)
 		<< SDL_BYTESPERPIXEL(surface->format->format) << "," 
 		<< SDL_GetPixelFormatName(surface->format->format) 
 		<< ")" << std::endl;
+	std::cout << fileName << " width: " << surface->w << " height: " << surface->h << std::endl;
+
 	Image* image = new Image(surface->w, surface->h, surface->pixels);
 
 	SDL_FreeSurface(surface);
@@ -299,6 +301,24 @@ void Raster::drawImage(int32 startX, int32 startY, const Image* image)
 		{
 			Rgba color = image->pixelAt(x - left,y - top);
 			setPixelEx(x, y, color);
+		}
+	}
+}
+void Raster::drawImageWithColorKey(int32 startX, int32 startY, const Image* image, Rgba key) 
+{
+	int32 left = std::max(startX, 0);
+	int32 top = std::max(startY, 0);
+
+	int32 right = std::min(startX + image->width(), _width);
+	int32 bottom = std::min(startY + image->height(), _height);
+
+	for(int32 x = left; x < right; ++x) 
+	{
+		for(int32 y = top; y < bottom; ++y)
+		{
+			Rgba color = image->pixelAt(x - left,y - top);
+			if ( color != key )
+				setPixelEx(x, y, color);
 		}
 	}
 }
