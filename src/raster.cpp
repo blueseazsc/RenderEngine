@@ -359,3 +359,22 @@ void Raster::drawImageWithAlphaBlend(int32 startX, int32 startY, const Image* im
 		}
 	}
 }
+void Raster::drawImageWithAlpha(int32 startX, int32 startY, const Image* image, float alpha) 
+{
+	int32 left = std::max(startX, 0);
+	int32 top = std::max(startY, 0);
+
+	int32 right = std::min(startX + image->width(), _width);
+	int32 bottom = std::min(startY + image->height(), _height);
+
+	for(int32 x = left; x < right; ++x) 
+	{
+		for(int32 y = top; y < bottom; ++y)
+		{
+			Rgba dstColor = image->pixelAt(x - left,y - top);
+			Rgba srcColor = getPixel(x,y);
+			Rgba color = colorLerp(srcColor, dstColor, alpha);
+			setPixelEx(x, y, color);
+		}
+	}
+}
