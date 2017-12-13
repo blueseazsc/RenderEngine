@@ -129,6 +129,8 @@ public:
 	void drawImageWithAlphaBlend(int32 startX, int32 startY, const Image* image);
 
 	void drawImageWithAlpha(int32 startX, int32 startY, const Image* image, float alpha);
+
+	void drawImage(int32 startX, int32 startY, const Image* image, int32 ix, int32 iy, int32 iw, int32 ih);
 private:
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);

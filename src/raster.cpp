@@ -378,3 +378,20 @@ void Raster::drawImageWithAlpha(int32 startX, int32 startY, const Image* image, 
 		}
 	}
 }
+void Raster::drawImage(int32 startX, int32 startY, const Image* image, int32 ix, int32 iy, int32 iw, int32 ih) 
+{
+	int32 left = std::max(startX, 0);
+	int32 top = std::max(startY, 0);
+
+	int32 right = std::min(startX + iw, _width);
+	int32 bottom = std::min(startY + ih, _height);
+
+	for(int32 x = left; x < right; ++x) 
+	{
+		for(int32 y = top; y < bottom; ++y)
+		{
+			Rgba color = image->pixelAt(x - left + ix, y - top + iy);
+			setPixelEx(x, y, color);
+		}
+	}
+}

@@ -24,6 +24,13 @@ public:
 			return false;
 		}
 
+		_image3 =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/scale.jpg");
+		if ( _image3 == nullptr ) 
+		{
+			std::cerr << "image load failed!" << std::endl;
+			return false;
+		}
+
 		return true;
 	}
 	virtual void render() 
@@ -32,16 +39,19 @@ public:
 		// _gRaster.drawImageWithColorKey(100, 100, _image2, render::Rgba(255,0,0));
 		_gRaster.drawImageWithAlphaTest(100, 100, _image2, 100);
 		_gRaster.drawImageWithAlphaBlend(250, 100, _image2);
-		_gRaster.drawImageWithAlpha(250, 250, _image2, 0.5f);
+		// _gRaster.drawImageWithAlpha(250, 250, _image2, 0.5f);
+		_gRaster.drawImage(200,300,_image3,50,50,30,50);
     }
 	virtual void shutdown() 
 	{
 		delete _image;
 		delete _image2;
+		delete _image3;
 	}
 protected:
 	render::Image *_image 	= nullptr;
 	render::Image *_image2	= nullptr;
+	render::Image *_image3	= nullptr;
 };
 
 DECLARE_MAIN(Test);
