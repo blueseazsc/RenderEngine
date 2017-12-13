@@ -41,7 +41,24 @@ public:
 		// _gRaster.drawImageWithAlphaBlend(250, 100, _image2);
 		// _gRaster.drawImageWithAlpha(250, 250, _image2, 0.5f);
 		// _gRaster.drawImage(200,300,_image3,50,50,30,50);
-		_gRaster.drawImageScale(100,100,50,50,_image3);
+		// _gRaster.drawImageScale(100,100,50,50,_image3);
+		render::Raster::Vertex    vertex  =
+		{
+			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(),
+			render::Point2i(10,110),     render::Point2f(0.0f,1.0f), render::Rgba(),
+			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(),
+		};
+
+		render::Raster::Vertex    vertex1  =
+		{
+			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(),
+			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(),
+			render::Point2i(110,10),     render::Point2f(1.0f,0.0f), render::Rgba(),
+		};
+
+
+		_gRaster.drawTriangle(vertex,_image3);
+		_gRaster.drawTriangle(vertex1,_image3);
     }
 	virtual void shutdown() 
 	{

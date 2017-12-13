@@ -191,15 +191,15 @@ void Raster::drawArrays(DrawMode mode, const Point2f* points, int32 count)
 			break;
 	}
 }
-void Raster::drawTriangle(const Point2i* points,const Rgba* colors)
+void Raster::drawTriangle(const Vertex& vertex, Image* image)
 {
 	// if ( !isInRect(points[0]) && !isInRect(points[1]) && !isInRect(points[2])) 
 		// return;
 
 	Edge edges[3] = {
-		Edge(points[0].x(), points[0].y(), colors[0], points[1].x(), points[1].y(), colors[1]),
-		Edge(points[1].x(), points[1].y(), colors[1], points[2].x(), points[2].y(), colors[2]),
-		Edge(points[2].x(), points[2].y(), colors[2], points[0].x(), points[0].y(), colors[0]),
+		Edge(vertex.point0.x(), vertex.point0.y(), vertex.c0, vertex.uv0, vertex.point1.x(), vertex.point1.y(), vertex.c1, vertex.uv1),
+		Edge(vertex.point1.x(), vertex.point1.y(), vertex.c1, vertex.uv1, vertex.point2.x(), vertex.point2.y(), vertex.c2, vertex.uv2),
+		Edge(vertex.point2.x(), vertex.point2.y(), vertex.c2, vertex.uv2, vertex.point0.x(), vertex.point0.y(), vertex.c0, vertex.uv0),
 	};
 
 	int32 iMax = 0;
@@ -214,10 +214,10 @@ void Raster::drawTriangle(const Point2i* points,const Rgba* colors)
 	int32 iShort1 = (iMax + 1) % 3;
 	int32 iShort2 = (iMax + 2) % 3;
 
-	drawEdge(edges[iMax], edges[iShort1]);
-	drawEdge(edges[iMax], edges[iShort2]);
+	drawEdge(edges[iMax], edges[iShort1], image);
+	drawEdge(edges[iMax], edges[iShort2], image);
 }
-void Raster::drawEdge(const Edge& e1, const Edge& e2)
+void Raster::drawEdge(const Edge& e1, const Edge& e2, Image* image)
 {
 	float xOffset1 = e1._x2 - e1._x1;
 	float yOffset1 = e1._y2 - e1._y1;
@@ -259,8 +259,11 @@ void Raster::drawEdge(const Edge& e1, const Edge& e2)
 		Rgba color1 = colorLerp(e1._color1, e1._color2, colorScale1);
 		Rgba color2 = colorLerp(e2._color1, e2._color2, colorScale2);
 
-		Span span(x1, x2, color1, color2, y);
-		drawSpan(span);
+		Point2f uv1 = uvLerp(e1._uv1, e1._uv2, colorScale1);
+		Point2f uv2 = uvLerp(e2._uv1, e2._uv2, colorScale2);
+
+		Span span(x1, x2, y, color1, color2, uv1, uv2);
+		drawSpan(span, image);
 
 		colorScale1 += colorStep1;
 		colorScale2 += colorStep2;
@@ -269,7 +272,7 @@ void Raster::drawEdge(const Edge& e1, const Edge& e2)
 		xScale2 += xStep2;
 	} 
 }
-void Raster::drawSpan(const Span& span)
+void Raster::drawSpan(const Span& span, Image* image)
 {
 	float length = span._xEnd - span._xStart;
 
@@ -282,7 +285,13 @@ void Raster::drawSpan(const Span& span)
 
 	for(int32 x = startX; x <= endX; ++x) {
 		Rgba color = colorLerp(span._colorStart, span._colorEnd, scale );
-		setPixelEx(x, span._y, color);
+		Point2f uv = uvLerp(span._uvStart, span._uvEnd, scale);
+
+		Rgba pixel = image->pixelUV(uv.x(), uv.y());
+
+		Rgba dst = color + pixel;
+
+		setPixelEx(x, span._y, dst);
 
 		scale += step;
 	}

@@ -24,9 +24,12 @@ public:
 	Rgba _colorStart;
 	Rgba _colorEnd;
 
+	Point2f _uvStart;
+	Point2f _uvEnd;
+
 	int32 _y;
 public:
-	Span(int32 xStart, int32 xEnd, Rgba colorStart, Rgba colorEnd, int32 y)
+	Span(int32 xStart, int32 xEnd, int32 y, Rgba colorStart, Rgba colorEnd, const Point2f& uvStart, const Point2f uvEnd)
 	{
 		if ( xStart < xEnd ) {
 			_xStart = xStart;
@@ -34,6 +37,9 @@ public:
 
 			_colorStart = colorStart;
 			_colorEnd = colorEnd;
+
+			_uvStart = uvStart;
+			_uvEnd = uvEnd;
 
 			_y = y;
 		}
@@ -45,6 +51,9 @@ public:
 			_colorStart = colorEnd;
 			_colorEnd = colorStart;
 
+			_uvStart = uvEnd;
+			_uvEnd = uvStart;
+
 			_y = y;
 		}
 	}
@@ -54,36 +63,57 @@ class Edge {
 public:
 	int32 _x1;
 	int32 _y1;
+	Point2f _uv1;
 	Rgba _color1;
 
 	int32 _x2;
 	int32 _y2;
+	Point2f _uv2;
 	Rgba _color2;
 public:
-	Edge(int32 x1, int32 y1, Rgba color1, int32 x2, int32 y2, Rgba color2)
+	Edge(int32 x1, int32 y1, Rgba color1, const Point2f& uv1, int32 x2, int32 y2, Rgba color2, const Point2f& uv2)
 	{
 		if ( y1 < y2 ) {
 			_x1 	= x1;
 			_y1		= y1;
+			_uv1 	= uv1;
 			_color1	= color1;
 
 			_x2		= x2;
 			_y2		= y2;
+			_uv2 	= uv2;
 			_color2	= color2;
 		}
 		else {
 			_x1 	= x2;
 			_y1		= y2;
+			_uv1 	= uv2;
 			_color1	= color2;
 
 			_x2		= x1;
 			_y2		= y1;
+			_uv2 	= uv1;
 			_color2	= color1;
 		}
 	}
 };
 
 class Raster {
+public:
+	class Vertex {
+	public:
+		Point2i point0;
+		Point2f uv0;
+		Rgba c0;
+
+		Point2i point1;
+		Point2f uv1;
+		Rgba c1;
+
+		Point2i point2;
+		Point2f uv2;
+		Rgba c2;
+	};
 public:
 	typedef Uint32 BufferType;
 	int32 _width = 0;
@@ -114,11 +144,12 @@ public:
 	inline bool isInRect(const Point2i& point) {
 		return point.x() >= 0 && point.x() <= _width && point.y() >= 0 && point.y() <= _height;
 	}
-	void drawTriangle(const Point2i* points,const Rgba* colors);
-	// |y2 - y1| in e1 >= |y2 - y1| in e2
-	void drawEdge(const Edge& e1, const Edge& e2);
+	void drawTriangle(const Vertex& vertex, Image* image);
 
-	void drawSpan(const Span& span);
+	// |y2 - y1| in e1 >= |y2 - y1| in e2
+	void drawEdge(const Edge& e1, const Edge& e2, Image* image);
+
+	void drawSpan(const Span& span, Image* image);
 
 	void drawImage(int32 startX, int32 startY, const Image* image);
 

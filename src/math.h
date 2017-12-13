@@ -11,6 +11,9 @@ namespace render {
 #define HALF_PI                 1.57079632679489661
 #define DEG2RAD(theta)          (0.01745329251994329 * (theta))
 
+typedef Eigen::Vector2f Point2f;
+typedef Eigen::Vector2i Point2i;
+
 class Rgba4Byte {
 public:
 	Rgba4Byte(
@@ -45,6 +48,15 @@ public:
 			|| left._a != right._a
 			;
 	}
+	friend Rgba4Byte operator + (const Rgba4Byte& left, const Rgba4Byte& right)
+	{
+		return Rgba4Byte(
+				left._r + right._r,
+				left._g + right._g,
+				left._b + right._b,
+				left._a + right._a
+				);
+	}
 public:
 	union {
 		struct {
@@ -67,8 +79,13 @@ inline Rgba4Byte colorLerp(const Rgba4Byte& c1, const Rgba4Byte& c2, float s)
 	color._a = (uint8)(c1._a + s * ( c2._a - c1._a ));
 	return color;
 }
+inline Point2f uvLerp(const Point2f& p1, const Point2f& p2, float s)
+{
+	Point2f uv;
+	uv.x() = (p1.x() + s * ( p2.x() - p1.x() ));
+	uv.y() = (p1.y() + s * ( p2.y() - p1.y() ));
+	return uv;
+}
 
-typedef Eigen::Vector2f Point2f;
-typedef Eigen::Vector2i Point2i;
 }
 #endif

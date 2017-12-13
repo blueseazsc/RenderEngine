@@ -42,6 +42,12 @@ public:
 	{
 		return Rgba(_buffer[y * _width + x]);
 	}
+	Rgba pixelUV(float u, float v) const
+	{
+		float x = u * _width;
+		float y = v * _height;
+		return pixelAt(x,y);
+	}
 public:
  	static Image* loadFromFile(SDL_PixelFormat* format, const char*);
 };
