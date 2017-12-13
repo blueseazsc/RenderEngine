@@ -16,8 +16,9 @@ public:
 			std::cerr << "image load failed!" << std::endl;
 			return false;
 		}
-	 	_colorKey =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/colorKey.png");
-		if ( _colorKey == nullptr ) 
+		// _image2 =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/colorKey.png");
+		_image2 =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/grass.png");
+		if ( _image2 == nullptr ) 
 		{
 			std::cerr << "image load failed!" << std::endl;
 			return false;
@@ -28,16 +29,17 @@ public:
 	virtual void render() 
     {
 		_gRaster.drawImage(0, 0, _image);
-		_gRaster.drawImageWithColorKey(100, 100, _colorKey, render::Rgba(255,0,0));
+		// _gRaster.drawImageWithColorKey(100, 100, _image2, render::Rgba(255,0,0));
+		_gRaster.drawImageWithAlphaTest(100, 100, _image2, 100);
     }
 	virtual void shutdown() 
 	{
 		delete _image;
-		delete _colorKey;
+		delete _image2;
 	}
 protected:
-	render::Image *_image = nullptr;
-	render::Image *_colorKey = nullptr;
+	render::Image *_image 	= nullptr;
+	render::Image *_image2	= nullptr;
 };
 
 DECLARE_MAIN(Test);

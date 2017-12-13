@@ -123,6 +123,8 @@ public:
 	void drawImage(int32 startX, int32 startY, const Image* image);
 
 	void drawImageWithColorKey(int32 startX, int32 startY, const Image* image, Rgba key);
+
+	void drawImageWithAlphaTest(int32 startX, int32 startY, const Image* image, uint8 alpha); 
 private:
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);
