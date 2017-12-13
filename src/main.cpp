@@ -44,16 +44,16 @@ public:
 		// _gRaster.drawImageScale(100,100,50,50,_image3);
 		render::Raster::Vertex    vertex  =
 		{
-			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(),
-			render::Point2i(10,110),     render::Point2f(0.0f,1.0f), render::Rgba(),
-			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(),
+			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(255.f, 0.f, 0.f),
+			render::Point2i(10,110),     render::Point2f(0.0f,1.0f), render::Rgba(255.f, 0.f, 0.f),
+			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(255.f, 0.f, 0.f),
 		};
 
 		render::Raster::Vertex    vertex1  =
 		{
-			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(),
-			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(),
-			render::Point2i(110,10),     render::Point2f(1.0f,0.0f), render::Rgba(),
+			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(255.f, 0.f, 0.f),
+			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(255.f, 0.f, 0.f),
+			render::Point2i(110,10),     render::Point2f(1.0f,0.0f), render::Rgba(255.f, 0.f, 0.f),
 		};
 
 

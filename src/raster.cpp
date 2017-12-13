@@ -283,7 +283,7 @@ void Raster::drawSpan(const Span& span, Image* image)
 	int32 endX = std::min(span._xEnd, _width);
 	scale += (startX - span._xStart) * step;
 
-	for(int32 x = startX; x <= endX; ++x) {
+	for(int32 x = startX; x < endX; ++x) {
 		Rgba color = colorLerp(span._colorStart, span._colorEnd, scale );
 		Point2f uv = uvLerp(span._uvStart, span._uvEnd, scale);
 
