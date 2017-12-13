@@ -125,9 +125,15 @@ public:
 	void drawImageWithColorKey(int32 startX, int32 startY, const Image* image, Rgba key);
 
 	void drawImageWithAlphaTest(int32 startX, int32 startY, const Image* image, uint8 alpha); 
+
+	void drawImageWithAlphaBlend(int32 startX, int32 startY, const Image* image);
 private:
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);
+	inline Rgba getPixel(uint32 x,uint32 y)
+	{
+		return  Rgba(_buffer[y * _width + x]);
+	}
 	inline void setPixelEx(uint32 x, uint32 y, Rgba color) 
 	{
 		_buffer[y * _width + x] = SDL_MapRGBA(_colorFormat, color._r, color._g, color._b, color._a);
