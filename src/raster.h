@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include "config.h"
 #include "math.h"
+#include "image.h"
 
 namespace render {
 
@@ -119,7 +120,7 @@ public:
 
 	void drawSpan(const Span& span);
 
-	void drawImage(int32 startX, int32 startY, int32 w, int32 h);
+	void drawImage(int32 startX, int32 startY, const Image* image);
 private:
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);

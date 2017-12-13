@@ -1,6 +1,47 @@
 #include "raster.h"
+#include <iostream>
 
 using namespace render;
+
+Image* Image::loadFromFile(SDL_PixelFormat* format, const char* fileName)
+{
+	SDL_Surface *surface = IMG_Load("/Users/zhangsc/Downloads/image/1.jpg");
+	if (surface == nullptr)
+	{
+		std::cerr << SDL_GetError() << std::endl;
+		return nullptr;
+	}
+
+	std::cout << fileName << " format: (" 
+		<< SDL_PIXELFLAG(surface->format->format) << "," 
+		<< SDL_PIXELTYPE(surface->format->format) << "," 
+		<< SDL_PIXELORDER(surface->format->format) << "," 
+		<< SDL_PIXELLAYOUT(surface->format->format) << "," 
+		<< SDL_BITSPERPIXEL(surface->format->format) << "," 
+		<< SDL_BYTESPERPIXEL(surface->format->format) << "," 
+		<< SDL_GetPixelFormatName(surface->format->format) 
+		<< ")" << std::endl;
+	std::cout << fileName << " width: " << surface->w << " height: " << surface->h << std::endl;
+
+	SDL_Surface *tmp = surface;
+	surface = SDL_ConvertSurface(surface, format, 0);
+	SDL_FreeSurface(tmp);
+
+	std::cout << fileName << " convert format: (" 
+		<< SDL_PIXELFLAG(surface->format->format) << "," 
+		<< SDL_PIXELTYPE(surface->format->format) << "," 
+		<< SDL_PIXELORDER(surface->format->format) << "," 
+		<< SDL_PIXELLAYOUT(surface->format->format) << "," 
+		<< SDL_BITSPERPIXEL(surface->format->format) << "," 
+		<< SDL_BYTESPERPIXEL(surface->format->format) << "," 
+		<< SDL_GetPixelFormatName(surface->format->format) 
+		<< ")" << std::endl;
+	Image* image = new Image(surface->w, surface->h, surface->pixels);
+
+	SDL_FreeSurface(surface);
+
+	return  image;
+}
 
 void Raster::clear() 
 {
@@ -244,19 +285,19 @@ void Raster::drawSpan(const Span& span)
 		scale += step;
 	}
 }
-void Raster::drawImage(int32 startX, int32 startY, int32 w, int32 h) 
+void Raster::drawImage(int32 startX, int32 startY, const Image* image) 
 {
 	int32 left = std::max(startX, 0);
 	int32 top = std::max(startY, 0);
 
-	int32 right = std::min(startX + w, _width);
-	int32 bottom = std::min(startY + h, _height);
+	int32 right = std::min(startX + image->width(), _width);
+	int32 bottom = std::min(startY + image->height(), _height);
 
 	for(int32 x = left; x < right; ++x) 
 	{
 		for(int32 y = top; y < bottom; ++y)
 		{
-			Rgba color = Rgba(rand()%256,rand()%256,rand()%256);
+			Rgba color = image->pixelAt(x - left,y - top);
 			setPixelEx(x, y, color);
 		}
 	}

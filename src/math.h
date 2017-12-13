@@ -25,6 +25,10 @@ public:
 		_b = b;
 		_a = a;
 	}
+	Rgba4Byte(uint32 color)
+	{
+		_color = color;
+	}
 	friend bool operator == (const Rgba4Byte& left, const Rgba4Byte& right) 
 	{
 		return left._r == right._r
@@ -41,15 +45,16 @@ public:
 			|| left._a != right._a
 			;
 	}
-	uint32_t toUint32() const 
-	{
-		return (_b) | (_g << 8) | (_r << 16) | (_a << 24);
-	}
 public:
-	uint8 _r;
-	uint8 _g;
-	uint8 _b;
-	uint8 _a;
+	union {
+		struct {
+			uint8 _a;
+			uint8 _b;
+			uint8 _g;
+			uint8 _r;
+		};
+		uint32 _color;
+	};
 };
 typedef Rgba4Byte Rgba;
 
