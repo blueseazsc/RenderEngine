@@ -395,3 +395,20 @@ void Raster::drawImage(int32 startX, int32 startY, const Image* image, int32 ix,
 		}
 	}
 }
+void Raster::drawImageScale(int32 dstX, int32 dstY, int32 dstW, int32 dstH, const Image* image)
+{
+	float xScale = (float)image->width() / (float)dstW;
+	float yScale = (float)image->height() / (float)dstH;
+
+	for(int32 x = dstX; x < dstX + dstW; ++x) 
+	{
+		for(int32 y = dstY; y < dstY + dstH; ++y)
+		{
+			float xx = (x - dstX) * xScale;
+			float yy = (y - dstY) * yScale;
+
+			Rgba color = image->pixelAt(xx, yy);
+			setPixelEx(x, y, color);
+		}
+	}
+}

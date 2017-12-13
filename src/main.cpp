@@ -37,10 +37,11 @@ public:
     {
 		_gRaster.drawImage(0, 0, _image);
 		// _gRaster.drawImageWithColorKey(100, 100, _image2, render::Rgba(255,0,0));
-		_gRaster.drawImageWithAlphaTest(100, 100, _image2, 100);
-		_gRaster.drawImageWithAlphaBlend(250, 100, _image2);
+		// _gRaster.drawImageWithAlphaTest(100, 100, _image2, 100);
+		// _gRaster.drawImageWithAlphaBlend(250, 100, _image2);
 		// _gRaster.drawImageWithAlpha(250, 250, _image2, 0.5f);
-		_gRaster.drawImage(200,300,_image3,50,50,30,50);
+		// _gRaster.drawImage(200,300,_image3,50,50,30,50);
+		_gRaster.drawImageScale(100,100,50,50,_image3);
     }
 	virtual void shutdown() 
 	{
