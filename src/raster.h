@@ -14,6 +14,21 @@ enum DrawMode {
 	DM_LINES		= 1,
 	DM_LINE_LOOP	= 2,
 	DM_LINE_STRIP	= 3,
+	DM_TRIANGLES 	= 4,
+};
+
+enum DataType {
+	DT_UINT8, 
+	DT_FLOAT, 
+	DT_DOUBLE, 
+};
+
+class DataElementDes {
+public:
+	int32       _size;
+	DataType	_type;
+	int32       _stride;
+	const void* _data;
 };
 
 class Span {
@@ -116,18 +131,61 @@ public:
 	};
 public:
 	typedef Uint32 BufferType;
-	int32 _width = 0;
-	int32 _height = 0;
+	int32 _width;
+	int32 _height;
 private:
-	BufferType* _buffer = nullptr;
-	SDL_PixelFormat* _colorFormat = nullptr;
+	BufferType* _buffer;
+	SDL_PixelFormat* _colorFormat;
 	Rgba _color;
+private:
+	Image* _texture;
+	DataElementDes 	_positionPointer;
+	DataElementDes 	_colorPointer;
+	DataElementDes 	_uvPointer;
+
+	DataElementDes 	_defaultColorPointer;
+	DataElementDes 	_defaultUVPointer;
+
+	Rgba           	_defaultColorArray[3];
+	float 			_defaultUVArray[3 * 2];
 public:
+	Raster();
 	void clear();
 	inline void setInfo(int32 width, int32 height, SDL_PixelFormat* colorFormat) { _width = width; _height = height; _colorFormat = colorFormat; }
 	inline void setBuffer(void* buffer) { _buffer = (BufferType*)buffer;}
 
+	void vertexPointer(int32 size, DataType type, int32 stride, const void* data)
+	{
+		_positionPointer._size   =   size;
+		_positionPointer._type   =   type;
+		_positionPointer._stride =   stride;
+		_positionPointer._data   =   data;
+	}
+
+	void colorPointer(int32 size, DataType type, int32 stride, const void* data)
+	{
+		_colorPointer._size     =   size;
+		_colorPointer._type     =   type;
+		_colorPointer._stride   =   stride;
+		_colorPointer._data     =   data;
+	}
+
+	void textureCoordPointer(int32 size, DataType type, int32 stride, const void* data)
+	{
+		_uvPointer._size        =   size;
+		_uvPointer._type        =   type;
+		_uvPointer._stride      =   stride;
+		_uvPointer._data        =   data;
+	}
+
+	void bindTexture(Image* image)
+	{
+		_texture    =   image;
+	}
+
 	void drawArrays(DrawMode mode, const Point2f* points, int32 count);
+
+	void drawArrays(DrawMode mode, int32 start, int32 count);
 
 	void drawPoint(int32 x, int32 y, Rgba color, int32 ptSize);
 
@@ -144,7 +202,10 @@ public:
 	inline bool isInRect(const Point2i& point) {
 		return point.x() >= 0 && point.x() <= _width && point.y() >= 0 && point.y() <= _height;
 	}
+
 	void drawTriangle(const Vertex& vertex, Image* image);
+
+	void drawTriangle(Edge edges[3]);
 
 	// |y2 - y1| in e1 >= |y2 - y1| in e2
 	void drawEdge(const Edge& e1, const Edge& e2, Image* image);

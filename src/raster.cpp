@@ -45,6 +45,31 @@ Image* Image::loadFromFile(SDL_PixelFormat* format, const char* fileName)
 	return  image;
 }
 
+Raster::Raster() {
+	_width = 0;
+	_height = 0;
+
+	_buffer = nullptr;
+	_colorFormat = nullptr;
+
+	_texture = nullptr;
+
+	memset(&_positionPointer, 	0,	sizeof(_positionPointer));
+	memset(&_colorPointer, 		0, 	sizeof(_colorPointer));
+	memset(&_uvPointer, 		0, 	sizeof(_uvPointer));
+
+	_defaultColorPointer._size = 4;
+	_defaultColorPointer._type = DT_UINT8;
+	_defaultColorPointer._stride = sizeof(Rgba);
+	_defaultColorPointer._data = &_defaultColorArray;
+
+	_defaultUVPointer._size = 2;
+	_defaultUVPointer._type = DT_FLOAT;
+	_defaultUVPointer._stride = 2 * sizeof(float);
+	_defaultUVPointer._data = &_defaultUVArray;
+
+	memset(_defaultUVArray, 0, sizeof(_defaultUVArray));
+}
 void Raster::clear() 
 {
 	memset(_buffer, 0, _width * _height * sizeof(BufferType));
@@ -164,6 +189,69 @@ void Raster::drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba co
 		}
 	}
 }
+void Raster::drawArrays(DrawMode mode, int32 start, int32 count)
+{
+	if ( _positionPointer._data == nullptr )
+		return;
+
+	DataElementDes colorPointer = _colorPointer;
+	DataElementDes uvPointer = _uvPointer;
+
+	if ( colorPointer._data == nullptr )
+		colorPointer = _defaultColorPointer;
+
+	if ( uvPointer._data == nullptr )
+		uvPointer = _defaultUVPointer;
+
+	char* posData = (char*)(_positionPointer._data);
+	char* cData = (char*)(colorPointer._data);
+	char* uvData = (char*)(uvPointer._data);
+
+	for(int32 i = start; i < start + count; i+=3) {
+		float* fPosData = (float*)posData;
+		Point2i p0(fPosData[0], fPosData[1]);
+				posData += _positionPointer._stride;
+				fPosData = (float*)posData;
+		Point2i p1(fPosData[0], fPosData[1]);
+				posData += _positionPointer._stride;
+				fPosData = (float*)posData;
+		Point2i p2(fPosData[0], fPosData[1]);
+				posData += _positionPointer._stride;
+
+		Rgba*   pColor   =   (Rgba*)cData;
+		Rgba    c0 (*pColor);
+				cData   +=  _colorPointer._stride;
+		Rgba    c1 (*pColor);
+				cData   +=  _colorPointer._stride;
+		Rgba    c2 (*pColor);
+				cData   +=  _colorPointer._stride;
+
+		float*  pUV     =   (float*)uvData;
+		Point2f uv0 (pUV[0],pUV[1]);
+				uvData  +=  _uvPointer._stride;
+				pUV     =   (float*)uvData;
+		Point2f uv1(pUV[0],pUV[1]);
+				uvData  +=  _uvPointer._stride;
+				pUV     =   (float*)uvData;
+		Point2f uv2(pUV[0],pUV[1]);
+				uvData  +=  _uvPointer._stride;
+
+		Edge edges[3]  =
+		{
+			Edge(p0.x(),p0.y(),c0,uv0, p1.x(),p1.y(),c1,uv1),
+			Edge(p1.x(),p1.y(),c1,uv1, p2.x(),p2.y(),c2,uv2),
+			Edge(p2.x(),p2.y(),c2,uv2, p0.x(),p0.y(),c0,uv0),
+		};
+
+		drawTriangle(edges);
+
+		if ( _colorPointer._data == nullptr )
+			cData = (char*)(colorPointer._data);
+		if ( _uvPointer._data == nullptr )
+			uvData = (char*)(uvPointer._data);
+	}
+
+}
 void Raster::drawArrays(DrawMode mode, const Point2f* points, int32 count)
 {
 	switch(mode) {
@@ -190,6 +278,23 @@ void Raster::drawArrays(DrawMode mode, const Point2f* points, int32 count)
 		default:
 			break;
 	}
+}
+void Raster::drawTriangle(Edge edges[3])
+{
+	int32 iMax = 0;
+	int32 lMax = 0;
+	for(int32_t i = 0; i < 3; ++i) {
+		if ( edges[i]._y2 - edges[i]._y1 > lMax ) {
+			lMax = edges[i]._y2 - edges[i]._y1;
+			iMax = i;
+		}
+	}
+
+	int32 iShort1 = (iMax + 1) % 3;
+	int32 iShort2 = (iMax + 2) % 3;
+
+	drawEdge(edges[iMax], edges[iShort1], _texture);
+	drawEdge(edges[iMax], edges[iShort2], _texture);
 }
 void Raster::drawTriangle(const Vertex& vertex, Image* image)
 {

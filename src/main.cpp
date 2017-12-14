@@ -8,6 +8,14 @@
 class Test:	public Application
 {
 public:
+	class Vertex
+	{
+	public:
+		float       x,y;
+		float       u,v;
+		render::Rgba  color;
+	};
+public:
 	virtual bool startup() 
 	{
 	 	_image =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/bg.png");
@@ -36,29 +44,25 @@ public:
 	virtual void render() 
     {
 		_gRaster.drawImage(0, 0, _image);
-		// _gRaster.drawImageWithColorKey(100, 100, _image2, render::Rgba(255,0,0));
-		// _gRaster.drawImageWithAlphaTest(100, 100, _image2, 100);
-		// _gRaster.drawImageWithAlphaBlend(250, 100, _image2);
-		// _gRaster.drawImageWithAlpha(250, 250, _image2, 0.5f);
-		// _gRaster.drawImage(200,300,_image3,50,50,30,50);
-		// _gRaster.drawImageScale(100,100,50,50,_image3);
-		render::Raster::Vertex    vertex  =
+
+		Vertex  vertexs[]   =
 		{
-			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(255.f, 0.f, 0.f),
-			render::Point2i(10,110),     render::Point2f(0.0f,1.0f), render::Rgba(255.f, 0.f, 0.f),
-			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(255.f, 0.f, 0.f),
+			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{110,   110,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
+			{110,   10,     1.0f,   0.0f,   render::Rgba(255,255,255,255)},
+
+			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{110,   110,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
+			{10,    110,    0.0f,   1.0f,   render::Rgba(255,255,255,255)},
 		};
 
-		render::Raster::Vertex    vertex1  =
-		{
-			render::Point2i(10,10),      render::Point2f(0.0f,0.0f), render::Rgba(255.f, 0.f, 0.f),
-			render::Point2i(110,110),    render::Point2f(1.0f,1.0f), render::Rgba(255.f, 0.f, 0.f),
-			render::Point2i(110,10),     render::Point2f(1.0f,0.0f), render::Rgba(255.f, 0.f, 0.f),
-		};
+		_gRaster.bindTexture(_image3);
 
+		_gRaster.vertexPointer(2,render::DT_FLOAT,      sizeof(Vertex),&vertexs[0].x);
+		_gRaster.textureCoordPointer(2,render::DT_FLOAT,sizeof(Vertex),&vertexs[0].u);
+		// _gRaster.colorPointer(4,render::DT_UINT8,       sizeof(Vertex),&vertexs[0].color);
 
-		_gRaster.drawTriangle(vertex,_image3);
-		_gRaster.drawTriangle(vertex1,_image3);
+		_gRaster.drawArrays(render::DM_TRIANGLES,0,6);
     }
 	virtual void shutdown() 
 	{
