@@ -8,8 +8,8 @@
 namespace render {
 
 enum ImageWrapType {
-	IWT_DUP;
-	IWT_CLAMP;
+	IWT_DUP,
+	IWT_CLAMP,
 };
 
 class Image 
@@ -59,17 +59,17 @@ public:
 		switch(_wrapType) {
 			case IWT_CLAMP:
 				{
-					return pixelAt( uint32(x) % _width, uint32(y) % _height );
-				}
-				break;
-			case IWT_DUP:
-			default:
-				{
 					if ( x >= _width )
 						x = _width - 1;
 					if ( y >= _height )
 						y = _height - 1;
 					return pixelAt(x,y);
+				}
+				break;
+			case IWT_DUP:
+			default:
+				{
+					return pixelAt( uint32(x) % _width, uint32(y) % _height );
 				}
 				break;
 		}
