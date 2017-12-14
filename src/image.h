@@ -7,6 +7,11 @@
 
 namespace render {
 
+enum ImageWrapType {
+	IWT_DUP;
+	IWT_CLAMP;
+};
+
 class Image 
 {
 private:
@@ -14,6 +19,7 @@ private:
 	int32 _width = 0;
 	int32 _height = 0;
 	BufferType* _buffer = nullptr;
+	ImageWrapType _wrapType = IWT_DUP;
 public:
 	Image(int32 w, int32 h, void* data) 
 	{
@@ -27,6 +33,10 @@ public:
 	~Image()
 	{
 		delete []_buffer;
+	}
+
+	void setWrapType(ImageWrapType type) {
+		_wrapType = type;
 	}
 
 	int32 width() const
@@ -46,7 +56,23 @@ public:
 	{
 		float x = u * _width;
 		float y = v * _height;
-		return pixelAt(x,y);
+		switch(_wrapType) {
+			case IWT_CLAMP:
+				{
+					return pixelAt( uint32(x) % _width, uint32(y) % _height );
+				}
+				break;
+			case IWT_DUP:
+			default:
+				{
+					if ( x >= _width )
+						x = _width - 1;
+					if ( y >= _height )
+						y = _height - 1;
+					return pixelAt(x,y);
+				}
+				break;
+		}
 	}
 public:
  	static Image* loadFromFile(SDL_PixelFormat* format, const char*);

@@ -48,13 +48,21 @@ public:
 		Vertex  vertexs[]   =
 		{
 			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{110,   110,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
-			{110,   10,     1.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{220,   220,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
+			{220,   10,     1.0f,   0.0f,   render::Rgba(255,255,255,255)},
 
 			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{110,   110,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
-			{10,    110,    0.0f,   1.0f,   render::Rgba(255,255,255,255)},
+			{220,   220,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
+			{10,    220,    0.0f,   1.0f,   render::Rgba(255,255,255,255)},
 		};
+
+		static  float   step   =   0;
+		for (int i = 0 ;i < 6 ; ++ i )
+		{
+			vertexs[i].v    +=  step;
+		}
+
+		step    +=  0.1f;
 
 		_gRaster.bindTexture(_image3);
 
