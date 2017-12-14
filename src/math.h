@@ -2,6 +2,7 @@
 #define RENDER_MATH_H
 
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 #include "config.h"
 
 namespace render {
@@ -11,9 +12,14 @@ namespace render {
 #define HALF_PI                 1.57079632679489661
 #define DEG2RAD(theta)          (0.01745329251994329 * (theta))
 
+typedef Eigen::Vector3f Point3f;
+typedef Eigen::Vector3f Vector3f;
 typedef Eigen::Vector2f Point2f;
 typedef Eigen::Vector2i Point2i;
+typedef Eigen::Matrix3f Matrix3f;
+typedef Eigen::Isometry2f Isometry2f;
 
+#define Matrix3fIdentity Eigen::Matrix3f::Identity()
 class Rgba4Byte {
 public:
 	Rgba4Byte(

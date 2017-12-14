@@ -47,14 +47,28 @@ public:
 
 		Vertex  vertexs[]   =
 		{
-			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{220,   220,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
-			{220,   10,     2.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{-10,   -10,    0.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{210,   210,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{210,   -10,    2.0f,   0.0f,   render::Rgba(255,255,255,255)},
 
-			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{220,   220,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
-			{10,    220,    0.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{-10,   -10,    0.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{210,   210,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{-10,   210,    0.0f,   2.0f,   render::Rgba(255,255,255,255)},
 		};
+
+		static  float angles = 0;
+
+		Eigen::Isometry2f total = Eigen::Isometry2f::Identity();
+
+		total.translate(Eigen::Vector2f(-110,-110));
+		// Eigen::AngleAxisd rotation_vector ( angles / 360.f * 2 * M_PI, Eigen::Vector2d ( 0,0 ) );
+		// total.prerotate(rotation_vector);
+		// total.prescale(Eigen::Vector2f(0.5f,0.5f));
+		total.pretranslate(Eigen::Vector2f(110,110));
+
+        angles  +=  1.0f;
+
+        _gRaster.loadMatrix(total.matrix());
 
 		_image3->setWrapType(render::IWT_CLAMP);
 

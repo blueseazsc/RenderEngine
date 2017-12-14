@@ -139,6 +139,8 @@ private:
 	Rgba _color;
 private:
 	Image* _texture;
+	Matrix3f _matModel;
+
 	DataElementDes 	_positionPointer;
 	DataElementDes 	_colorPointer;
 	DataElementDes 	_uvPointer;
@@ -181,6 +183,15 @@ public:
 	void bindTexture(Image* image)
 	{
 		_texture    =   image;
+	}
+	void loadMatrix(const Matrix3f& mat)
+	{
+		_matModel   =   mat;
+	}
+
+	void loadIdentity()
+	{
+		_matModel = Matrix3fIdentity;
 	}
 
 	void drawArrays(DrawMode mode, const Point2f* points, int32 count);

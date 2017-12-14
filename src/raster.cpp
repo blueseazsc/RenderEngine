@@ -209,14 +209,21 @@ void Raster::drawArrays(DrawMode mode, int32 start, int32 count)
 
 	for(int32 i = start; i < start + count; i+=3) {
 		float* fPosData = (float*)posData;
-		Point2i p0(fPosData[0], fPosData[1]);
+		Point3f rawP0(fPosData[0], fPosData[1], 1.f);
+				rawP0 = _matModel * rawP0;
 				posData += _positionPointer._stride;
 				fPosData = (float*)posData;
-		Point2i p1(fPosData[0], fPosData[1]);
+		Point3f rawP1(fPosData[0], fPosData[1], 1.f);
+				rawP1 = _matModel * rawP1;
 				posData += _positionPointer._stride;
 				fPosData = (float*)posData;
-		Point2i p2(fPosData[0], fPosData[1]);
+		Point3f rawP2(fPosData[0], fPosData[1], 1.f);
+				rawP2 = _matModel * rawP2;
 				posData += _positionPointer._stride;
+
+		Point2i p0(rawP0.x(), rawP0.y());
+		Point2i p1(rawP1.x(), rawP1.y());
+		Point2i p2(rawP2.x(), rawP2.y());
 
 		Rgba*   pColor   =   (Rgba*)cData;
 		Rgba    c0 (*pColor);
