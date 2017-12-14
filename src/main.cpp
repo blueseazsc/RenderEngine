@@ -48,22 +48,22 @@ public:
 		Vertex  vertexs[]   =
 		{
 			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{220,   220,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
-			{220,   10,     1.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{220,   220,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{220,   10,     2.0f,   0.0f,   render::Rgba(255,255,255,255)},
 
 			{10,    10,     0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{220,   220,    1.0f,   1.0f,   render::Rgba(255,255,255,255)},
-			{10,    220,    0.0f,   1.0f,   render::Rgba(255,255,255,255)},
+			{220,   220,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{10,    220,    0.0f,   2.0f,   render::Rgba(255,255,255,255)},
 		};
 
-		// _image3->setWrapType(render::IWT_CLAMP);
+		_image3->setWrapType(render::IWT_CLAMP);
 
-		static  float   step   =   0;
-		for (int i = 0 ;i < 6 ; ++ i )
-		{
-			vertexs[i].u    +=  step;
-		}
-		step    +=  0.01f;
+		// static  float   step   =   0;
+		// for (int i = 0 ;i < 6 ; ++ i )
+		// {
+			// vertexs[i].u    +=  step;
+		// }
+		// step    +=  0.01f;
 
 		_gRaster.bindTexture(_image3);
 
