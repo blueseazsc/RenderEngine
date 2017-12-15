@@ -12,12 +12,15 @@ namespace render {
 #define HALF_PI                 1.57079632679489661
 #define DEG2RAD(theta)          (0.01745329251994329 * (theta))
 
+typedef Eigen::Vector3f Vector3f;
 typedef Eigen::Vector3f Point3f;
 typedef Eigen::Vector2f Point2f;
 typedef Eigen::Vector2i Point2i;
 typedef Eigen::Matrix3f Matrix3f;
+typedef Eigen::Matrix4f Matrix4f;
 
 #define Matrix3fIdentity Eigen::Matrix3f::Identity()
+#define Matrix4fIdentity Eigen::Matrix4f::Identity()
 class Rgba4Byte {
 public:
 	Rgba4Byte(
@@ -90,7 +93,7 @@ inline Point2f uvLerp(const Point2f& p1, const Point2f& p2, float s)
 	uv.y() = (p1.y() + s * ( p2.y() - p1.y() ));
 	return uv;
 }
-
+// 2D
 inline void genTranslate2D(Matrix3f& mat, float x, float y)
 {
 	mat = Matrix3fIdentity;
@@ -113,6 +116,75 @@ inline void genScale2D(Matrix3f& mat, float scaleX, float scaleY)
 	mat = Matrix3fIdentity;
 	mat(0,0) = scaleX;
 	mat(1,1) = scaleY;
+}
+// 3D
+inline void genTranslate(Matrix4f& mat, float x, float y, float z)
+{
+	mat = Matrix4fIdentity;
+	mat(0,3) = x;
+	mat(1,3) = y;
+	mat(2,3) = z;
+}
+inline void genRotateX(Matrix4f& mat, float angle)
+{
+	mat = Matrix4fIdentity;
+	float   rad   =   DEG2RAD(angle);
+	float   c     =   cos(rad);
+	float   s     =   sin(rad);
+	mat(1,1) = c;
+	mat(1,2) = -s;
+	mat(2,1) = s;
+	mat(2,2) = c;
+}
+inline void genRotateY(Matrix4f& mat, float angle)
+{
+	mat = Matrix4fIdentity;
+	float   rad   =   DEG2RAD(angle);
+	float   c     =   cos(rad);
+	float   s     =   sin(rad);
+	mat(0,0) = c;
+	mat(0,2) = -s;
+	mat(2,0) = s;
+	mat(2,2) = c;
+}
+inline void genRotateZ(Matrix4f& mat, float angle)
+{
+	mat = Matrix4fIdentity;
+	float   rad   =   DEG2RAD(angle);
+	float   c     =   cos(rad);
+	float   s     =   sin(rad);
+	mat(0,0) = c;
+	mat(0,1) = -s;
+	mat(1,0) = s;
+	mat(1,1) = c;
+}
+inline void genScale(Matrix4f& mat, float scaleX, float scaleY, float scaleZ)
+{
+	mat = Matrix4fIdentity;
+	mat(0,0) = scaleX;
+	mat(1,1) = scaleY;
+	mat(2,2) = scaleZ;
+}
+inline void genLookat(Matrix4f& mat, const Vector3f& eye, const Vector3f& center, const Vector3f& up)
+{
+	Vector3f f = (center - eye).normalize();
+	Vector3f u = up.normalize();
+	Vector3f s = f.cross(u).normalize();
+	u = s.cross(f);
+
+	mat = Matrix4fIdentity;
+	mat(0,0) = s.x();
+	mat(0,1) = s.x();
+	mat(0,2) = s.x();
+	mat(1,0) = u.x();
+	mat(1,1) = u.y();
+	mat(1,2) = u.z();
+	mat(2,0) = -f.x();
+	mat(2,1) = -f.y();
+	mat(2,2) = -f.z();
+	mat(3,0) = -dot(s, eye);
+	mat(3,1) = -dot(u, eye);
+	mat(3,2) = dot(f, eye);
 }
 
 }
