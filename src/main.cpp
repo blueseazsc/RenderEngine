@@ -72,20 +72,20 @@ public:
         rot(1,1) = c;
 
         render::Matrix3f   matScale = Matrix3fIdentity;
-		matScale(0,0) = 0.5f;
-		matScale(1,1) = 0.5f;
+		matScale(0,0) = 1.f;
+		matScale(1,1) = 1.f;
 
         render::Matrix3f   matTrans1 = Matrix3fIdentity;
         matTrans1(0,2) = 110;
         matTrans1(1,2) = 110;
 
-        render::Matrix3f all   =   matTrans1 * (rot * matScale * matTrans);
+        render::Matrix3f all   =   matTrans1 * rot * matScale * matTrans;
 
         angles  +=  1.0f;
 
-        _gRaster.loadMatrix(all);
+		_gRaster.loadMatrix(all);
 
-		_image3->setWrapType(render::IWT_CLAMP);
+		// _image3->setWrapType(render::IWT_CLAMP);
 
 		// static  float   step   =   0;
 		// for (int i = 0 ;i < 6 ; ++ i )
@@ -100,7 +100,7 @@ public:
 		_gRaster.textureCoordPointer(2,render::DT_FLOAT,sizeof(Vertex),&vertexs[0].u);
 		// _gRaster.colorPointer(4,render::DT_UINT8,       sizeof(Vertex),&vertexs[0].color);
 
-		_gRaster.drawArrays(render::DM_TRIANGLES,0,6);
+		_gRaster.drawArrays(render::DM_TRIANGLES,0,3);
     }
 	virtual void shutdown() 
 	{

@@ -53,6 +53,7 @@ Raster::Raster() {
 	_colorFormat = nullptr;
 
 	_texture = nullptr;
+	_matModel = Matrix3fIdentity;
 
 	memset(&_positionPointer, 	0,	sizeof(_positionPointer));
 	memset(&_colorPointer, 		0, 	sizeof(_colorPointer));
@@ -361,8 +362,8 @@ void Raster::drawEdge(const Edge& e1, const Edge& e2, Image* image)
 	int32 startY2 = std::max(e2._y1, 0);
 	int32 endY2 = std::min(e2._y2, _height);
 
-	colorScale2 += (startY2 - e2._y1) * colorStep1; 
-	xScale2 += (startY2 - e2._y1) * xStep1;
+	colorScale2 += (startY2 - e2._y1) * colorStep2; 
+	xScale2 += (startY2 - e2._y1) * xStep2;
 
 	for(int32 y = startY2; y < endY2; ++y) {
 		int32 x1 = e1._x1 + (int32)(xScale1);
