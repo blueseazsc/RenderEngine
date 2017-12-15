@@ -100,7 +100,7 @@ public:
 		_gRaster.textureCoordPointer(2,render::DT_FLOAT,sizeof(Vertex),&vertexs[0].u);
 		// _gRaster.colorPointer(4,render::DT_UINT8,       sizeof(Vertex),&vertexs[0].color);
 
-		_gRaster.drawArrays(render::DM_TRIANGLES,0,3);
+		_gRaster.drawArrays(render::DM_TRIANGLES,0,6);
     }
 	virtual void shutdown() 
 	{

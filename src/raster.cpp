@@ -347,11 +347,11 @@ void Raster::drawEdge(const Edge& e1, const Edge& e2, Image* image)
 	float xStep1 = xOffset1 / yOffset1; 
 	float xScale1 = (e2._y1 - e1._y1) * xStep1;
 
-	int32 startY1 = std::max(e1._y1, 0);
+	int32 startY1 = std::max(e2._y1, 0);
 	int32 endY1 = std::min(e1._y2, _height);
 
-	colorScale1 += (startY1 - e1._y1) * colorStep1; 
-	xScale1 += (startY1 - e1._y1) * xStep1;
+	colorScale1 += (startY1 - e2._y1) * colorStep1; 
+	xScale1 += (startY1 - e2._y1) * xStep1;
 
 	float colorStep2 = 1.f / yOffset2; 
 	float colorScale2 = 0;
