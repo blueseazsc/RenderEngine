@@ -47,37 +47,29 @@ public:
 
 		Vertex  vertexs[]   =
 		{
-			{-10,   -10,    0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{210,   210,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
-			{210,   -10,    2.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{-10,   -10,  0.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{210,   210,  2.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{210,   -10,  2.0f,   0.0f,   render::Rgba(255,255,255,255)},
 
-			{-10,   -10,    0.0f,   0.0f,   render::Rgba(255,255,255,255)},
-			{210,   210,    2.0f,   2.0f,   render::Rgba(255,255,255,255)},
-			{-10,   210,    0.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{-10,   -10,  0.0f,   0.0f,   render::Rgba(255,255,255,255)},
+			{210,   210,  2.0f,   2.0f,   render::Rgba(255,255,255,255)},
+			{-10,   210,  0.0f,   2.0f,   render::Rgba(255,255,255,255)},
 		};
 
 		static  float angles = 0;
 
-        render::Matrix3f   matTrans = Matrix3fIdentity;
-        matTrans(0,2) = -110;
-        matTrans(1,2) = -110;
+        render::Matrix3f   matTrans;
+		render::genTranslate2D(matTrans, -110, -110);
 
-        render::Matrix3f   rot = Matrix3fIdentity;
-		float   rad   =   DEG2RAD(angles);
-		float   c     =   cos(rad);
-		float   s     =   sin(rad);
-        rot(0,0) = c;
-        rot(0,1) = -s;
-        rot(1,0) = s;
-        rot(1,1) = c;
+        render::Matrix3f   rot;
+		render::genRotate2D(rot, angles);
 
-        render::Matrix3f   matScale = Matrix3fIdentity;
-		matScale(0,0) = 1.f;
-		matScale(1,1) = 1.f;
+        render::Matrix3f   matScale;
+		render::genScale2D(matScale, 1.f, 1.f);
 
-        render::Matrix3f   matTrans1 = Matrix3fIdentity;
-        matTrans1(0,2) = 110;
-        matTrans1(1,2) = 110;
+
+        render::Matrix3f   matTrans1;
+		render::genTranslate2D(matTrans1, 110, 110);
 
         render::Matrix3f all   =   matTrans1 * rot * matScale * matTrans;
 

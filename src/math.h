@@ -91,5 +91,29 @@ inline Point2f uvLerp(const Point2f& p1, const Point2f& p2, float s)
 	return uv;
 }
 
+inline void genTranslate2D(Matrix3f& mat, float x, float y)
+{
+	mat = Matrix3fIdentity;
+	mat(0,2) = x;
+	mat(1,2) = y;
+}
+inline void genRotate2D(Matrix3f& mat, float angle)
+{
+	mat = Matrix3fIdentity;
+	float   rad   =   DEG2RAD(angle);
+	float   c     =   cos(rad);
+	float   s     =   sin(rad);
+	mat(0,0) = c;
+	mat(0,1) = -s;
+	mat(1,0) = s;
+	mat(1,1) = c;
+}
+inline void genScale2D(Matrix3f& mat, float scaleX, float scaleY)
+{
+	mat = Matrix3fIdentity;
+	mat(0,0) = scaleX;
+	mat(1,1) = scaleY;
+}
+
 }
 #endif
