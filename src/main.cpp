@@ -58,17 +58,32 @@ public:
 
 		static  float angles = 0;
 
-		Eigen::Isometry2f total = Eigen::Isometry2f::Identity();
+        render::Matrix3f   matTrans = Matrix3fIdentity;
+        matTrans(0,2) = -110;
+        matTrans(1,2) = -110;
 
-		total.translate(Eigen::Vector2f(-110,-110));
-		// Eigen::AngleAxisd rotation_vector ( angles / 360.f * 2 * M_PI, Eigen::Vector2d ( 0,0 ) );
-		// total.prerotate(rotation_vector);
-		// total.prescale(Eigen::Vector2f(0.5f,0.5f));
-		total.pretranslate(Eigen::Vector2f(110,110));
+        render::Matrix3f   rot = Matrix3fIdentity;
+		float   rad   =   DEG2RAD(angles);
+		float   c     =   cos(rad);
+		float   s     =   sin(rad);
+        rot(0,0) = c;
+        rot(0,1) = -s;
+        rot(1,0) = s;
+        rot(1,1) = c;
+
+        render::Matrix3f   matScale = Matrix3fIdentity;
+		matScale(0,0) = 0.5f;
+		matScale(1,1) = 0.5f;
+
+        render::Matrix3f   matTrans1 = Matrix3fIdentity;
+        matTrans1(0,2) = 110;
+        matTrans1(1,2) = 110;
+
+        render::Matrix3f all   =   matTrans1 * (rot * matScale * matTrans);
 
         angles  +=  1.0f;
 
-        _gRaster.loadMatrix(total.matrix());
+        _gRaster.loadMatrix(all);
 
 		_image3->setWrapType(render::IWT_CLAMP);
 
