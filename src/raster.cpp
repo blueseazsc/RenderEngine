@@ -212,6 +212,8 @@ void Raster::drawArrays(DrawMode mode, int32 start, int32 count)
 
 	_matProjView = _matProj * _matView;
 
+	_frust.loadFrustum(_matProjView); 
+
 	for(int32 i = start; i < start + count; i+=3) {
 		float* fPosData = (float*)posData;
 		Point4f rawP0(fPosData[0], fPosData[1], fPosData[2], 1.f);
@@ -227,44 +229,51 @@ void Raster::drawArrays(DrawMode mode, int32 start, int32 count)
 		rawP1 = _matModel * rawP1;
 		rawP2 = _matModel * rawP2;
 
-		piplineTrasform(rawP0);
-		piplineTrasform(rawP1);
-		piplineTrasform(rawP2);
-
-		Point2i p0(rawP0.x(), rawP0.y());
-		Point2i p1(rawP1.x(), rawP1.y());
-		Point2i p2(rawP2.x(), rawP2.y());
-
-		Rgba    c0 (*(Rgba*)cData);
-				cData   +=  _colorPointer._stride;
-		Rgba    c1 (*(Rgba*)cData);
-				cData   +=  _colorPointer._stride;
-		Rgba    c2 (*(Rgba*)cData);
-				cData   +=  _colorPointer._stride;
-
-		float*  pUV     =   (float*)uvData;
-		Point2f uv0 (pUV[0],pUV[1]);
-				uvData  +=  _uvPointer._stride;
-				pUV     =   (float*)uvData;
-		Point2f uv1(pUV[0],pUV[1]);
-				uvData  +=  _uvPointer._stride;
-				pUV     =   (float*)uvData;
-		Point2f uv2(pUV[0],pUV[1]);
-				uvData  +=  _uvPointer._stride;
-
-		Edge edges[3]  =
+		if (   
+				_frust.pointInFrustum(Point3f(rawP0.x(), rawP0.y(), rawP0.z()))
+			||	_frust.pointInFrustum(Point3f(rawP1.x(), rawP1.y(), rawP1.z()))
+			||	_frust.pointInFrustum(Point3f(rawP2.x(), rawP2.y(), rawP2.z()))
+		   )
 		{
-			Edge(p0.x(),p0.y(),c0,uv0, p1.x(),p1.y(),c1,uv1),
-			Edge(p1.x(),p1.y(),c1,uv1, p2.x(),p2.y(),c2,uv2),
-			Edge(p2.x(),p2.y(),c2,uv2, p0.x(),p0.y(),c0,uv0),
-		};
+			piplineTrasform(rawP0);
+			piplineTrasform(rawP1);
+			piplineTrasform(rawP2);
 
-		drawTriangle(edges);
+			Point2i p0(rawP0.x(), rawP0.y());
+			Point2i p1(rawP1.x(), rawP1.y());
+			Point2i p2(rawP2.x(), rawP2.y());
 
-		if ( _colorPointer._data == nullptr )
-			cData = (char*)(colorPointer._data);
-		if ( _uvPointer._data == nullptr )
-			uvData = (char*)(uvPointer._data);
+			Rgba    c0 (*(Rgba*)cData);
+			cData   +=  _colorPointer._stride;
+			Rgba    c1 (*(Rgba*)cData);
+			cData   +=  _colorPointer._stride;
+			Rgba    c2 (*(Rgba*)cData);
+			cData   +=  _colorPointer._stride;
+
+			float*  pUV     =   (float*)uvData;
+			Point2f uv0 (pUV[0],pUV[1]);
+			uvData  +=  _uvPointer._stride;
+			pUV     =   (float*)uvData;
+			Point2f uv1(pUV[0],pUV[1]);
+			uvData  +=  _uvPointer._stride;
+			pUV     =   (float*)uvData;
+			Point2f uv2(pUV[0],pUV[1]);
+			uvData  +=  _uvPointer._stride;
+
+			Edge edges[3]  =
+			{
+				Edge(p0.x(),p0.y(),c0,uv0, p1.x(),p1.y(),c1,uv1),
+				Edge(p1.x(),p1.y(),c1,uv1, p2.x(),p2.y(),c2,uv2),
+				Edge(p2.x(),p2.y(),c2,uv2, p0.x(),p0.y(),c0,uv0),
+			};
+
+			drawTriangle(edges);
+
+			if ( _colorPointer._data == nullptr )
+				cData = (char*)(colorPointer._data);
+			if ( _uvPointer._data == nullptr )
+				uvData = (char*)(uvPointer._data);
+		}
 	}
 
 }

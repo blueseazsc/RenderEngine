@@ -144,6 +144,7 @@ private:
 	Matrix4f _matProj;
 	Matrix4f _matProjView;
 	Vector2f _viewPort;
+	Frustum _frust;
 
 	DataElementDes 	_positionPointer;
 	DataElementDes 	_colorPointer;

@@ -218,5 +218,64 @@ inline void genProjection(Matrix4f& mat, float fovy, float aspect, float zNear, 
 	mat(3,2) = - 1.f;
 	mat(2,3) = - (2.f * zFar * zNear) / (zFar - zNear);
 }
+class Plane
+{
+public:
+	Vector3f _normal;
+	float _distance;
+	Plane () : _normal(0,0,0), _distance(0)
+	{
+	}
+    Plane (float x, float y, float z, float o)
+    {
+        _normal     =   Vector3f(x, y, z);
+        float invLen    = 1.0f / _normal.norm();
+        _normal     *=  invLen;
+        _distance   =   o * invLen;
+    }
+	float distance(const Point3f& pos) const
+	{
+		return _normal.dot(pos) + _distance;
+	}
+};
+class Frustum 
+{
+public:
+	enum
+	{
+		FRUSTUM_LEFT    =   0,
+		FRUSTUM_RIGHT   =   1,
+		FRUSTUM_TOP     =   2,
+		FRUSTUM_BOTTOM  =   3,
+		FRUSTUM_FAR     =   4,
+		FRUSTUM_NEAR    =   5,
+	};
+public:
+	/**
+	 *   project * view
+	 */
+	void loadFrustum(const Matrix4f &mvp)
+	{
+		_planes[FRUSTUM_LEFT  ] =   Plane(mvp(3,0) - mvp(0,0), mvp(3,1) - mvp(0,1), mvp(3,2) - mvp(0,2), mvp(3,3) - mvp(0,3));
+		_planes[FRUSTUM_RIGHT ] =   Plane(mvp(3,0) + mvp(0,0), mvp(3,1) + mvp(0,1), mvp(3,2) + mvp(0,2), mvp(3,3) + mvp(0,3));
+
+		_planes[FRUSTUM_TOP   ] =   Plane(mvp(3,0) - mvp(1,0), mvp(3,1) - mvp(1,1), mvp(3,2) - mvp(1,2), mvp(3,3) - mvp(1,3));
+		_planes[FRUSTUM_BOTTOM] =   Plane(mvp(3,0) + mvp(1,0), mvp(3,1) + mvp(1,1), mvp(3,2) + mvp(1,2), mvp(3,3) + mvp(1,3));
+
+		_planes[FRUSTUM_FAR   ] =   Plane(mvp(3,0) - mvp(2,0), mvp(3,1) - mvp(2,1), mvp(3,2) - mvp(2,2), mvp(3,3) - mvp(2,3));
+		_planes[FRUSTUM_NEAR  ] =   Plane(mvp(3,0) + mvp(2,0), mvp(3,1) + mvp(2,1), mvp(3,2) + mvp(2,2), mvp(3,3) + mvp(2,3));
+	}
+	bool pointInFrustum(const Point3f &pos) const
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			if (_planes[i].distance(pos) <= 0)
+				return false;
+		}
+		return true;
+	}
+protected:
+	Plane _planes[6];
+};
 }
 #endif
