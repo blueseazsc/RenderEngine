@@ -53,7 +53,9 @@ Raster::Raster() {
 	_colorFormat = nullptr;
 
 	_texture = nullptr;
-	_matModel = Matrix3fIdentity;
+	_matModel = Matrix4fIdentity;
+	_matView = Matrix4fIdentity;
+	_matProj = Matrix4fIdentity;
 
 	memset(&_positionPointer, 	0,	sizeof(_positionPointer));
 	memset(&_colorPointer, 		0, 	sizeof(_colorPointer));
@@ -208,30 +210,36 @@ void Raster::drawArrays(DrawMode mode, int32 start, int32 count)
 	char* cData = (char*)(colorPointer._data);
 	char* uvData = (char*)(uvPointer._data);
 
+	_matProjView = _matProj * _matView;
+
 	for(int32 i = start; i < start + count; i+=3) {
 		float* fPosData = (float*)posData;
-		Point3f rawP0(fPosData[0], fPosData[1], 1.f);
-				rawP0 = _matModel * rawP0;
+		Point4f rawP0(fPosData[0], fPosData[1], fPosData[2], 1.f);
 				posData += _positionPointer._stride;
 				fPosData = (float*)posData;
-		Point3f rawP1(fPosData[0], fPosData[1], 1.f);
-				rawP1 = _matModel * rawP1;
+		Point4f rawP1(fPosData[0], fPosData[1], fPosData[2], 1.f);
 				posData += _positionPointer._stride;
 				fPosData = (float*)posData;
-		Point3f rawP2(fPosData[0], fPosData[1], 1.f);
-				rawP2 = _matModel * rawP2;
+		Point4f rawP2(fPosData[0], fPosData[1], fPosData[2], 1.f);
 				posData += _positionPointer._stride;
+
+		rawP0 = _matModel * rawP0;
+		rawP1 = _matModel * rawP1;
+		rawP2 = _matModel * rawP2;
+
+		piplineTrasform(rawP0);
+		piplineTrasform(rawP1);
+		piplineTrasform(rawP2);
 
 		Point2i p0(rawP0.x(), rawP0.y());
 		Point2i p1(rawP1.x(), rawP1.y());
 		Point2i p2(rawP2.x(), rawP2.y());
 
-		Rgba*   pColor   =   (Rgba*)cData;
-		Rgba    c0 (*pColor);
+		Rgba    c0 (*(Rgba*)cData);
 				cData   +=  _colorPointer._stride;
-		Rgba    c1 (*pColor);
+		Rgba    c1 (*(Rgba*)cData);
 				cData   +=  _colorPointer._stride;
-		Rgba    c2 (*pColor);
+		Rgba    c2 (*(Rgba*)cData);
 				cData   +=  _colorPointer._stride;
 
 		float*  pUV     =   (float*)uvData;
@@ -404,7 +412,7 @@ void Raster::drawSpan(const Span& span, Image* image)
 
 		Rgba dst = color + pixel;
 
-		setPixelEx(x, span._y, dst);
+		setPixelEx(x, span._y, color);
 
 		scale += step;
 	}
@@ -533,4 +541,31 @@ void Raster::drawImageScale(int32 dstX, int32 dstY, int32 dstW, int32 dstH, cons
 			setPixelEx(x, y, color);
 		}
 	}
+}
+bool Raster::piplineTrasform(Vector4f& pos)
+{
+	Vector4f screen = _matProjView * pos;
+	if ( screen.w() == 0.f )
+		return false;
+
+	// map to [-1,1]
+	screen.x() /= screen.w();
+	screen.y() /= screen.w();
+	screen.z() /= screen.w();
+
+	// map to [0,1]
+	screen.x() = screen.x() * 0.5f + 0.5f;
+	screen.y() = screen.y() * 0.5f + 0.5f;
+	screen.z() = screen.z() * 0.5f + 0.5f;
+
+	// map to viewport
+	screen.x() = screen.x() * _viewPort.x();
+	screen.y() = _height - screen.y() * _viewPort.y();
+
+	
+	// return
+	screen.w() = 1.f;
+	pos = screen;
+
+	return true;
 }

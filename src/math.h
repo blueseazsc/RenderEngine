@@ -12,10 +12,15 @@ namespace render {
 #define HALF_PI                 1.57079632679489661
 #define DEG2RAD(theta)          (0.01745329251994329 * (theta))
 
+typedef Eigen::Vector4f Vector4f;
 typedef Eigen::Vector3f Vector3f;
+typedef Eigen::Vector2f Vector2f;
+
+typedef Eigen::Vector4f Point4f;
 typedef Eigen::Vector3f Point3f;
 typedef Eigen::Vector2f Point2f;
 typedef Eigen::Vector2i Point2i;
+
 typedef Eigen::Matrix3f Matrix3f;
 typedef Eigen::Matrix4f Matrix4f;
 
@@ -143,8 +148,8 @@ inline void genRotateY(Matrix4f& mat, float angle)
 	float   c     =   cos(rad);
 	float   s     =   sin(rad);
 	mat(0,0) = c;
-	mat(0,2) = -s;
-	mat(2,0) = s;
+	mat(0,2) = s;
+	mat(2,0) = -s;
 	mat(2,2) = c;
 }
 inline void genRotateZ(Matrix4f& mat, float angle)
@@ -165,27 +170,53 @@ inline void genScale(Matrix4f& mat, float scaleX, float scaleY, float scaleZ)
 	mat(1,1) = scaleY;
 	mat(2,2) = scaleZ;
 }
-inline void genLookat(Matrix4f& mat, const Vector3f& eye, const Vector3f& center, const Vector3f& up)
+inline void genLookat(Matrix4f& mat, const Vector3f& eye, const Vector3f& center, const Vector3f& upRef)
 {
-	Vector3f f = (center - eye).normalize();
-	Vector3f u = up.normalize();
-	Vector3f s = f.cross(u).normalize();
-	u = s.cross(f);
+	Vector3f forward = eye - center;
+	forward.normalize();
+	Vector3f up = upRef;
+	up.normalize();
+	Vector3f side = forward.cross(up);
+	side.normalize();
+	up = side.cross(forward);
 
 	mat = Matrix4fIdentity;
-	mat(0,0) = s.x();
-	mat(0,1) = s.x();
-	mat(0,2) = s.x();
-	mat(1,0) = u.x();
-	mat(1,1) = u.y();
-	mat(1,2) = u.z();
-	mat(2,0) = -f.x();
-	mat(2,1) = -f.y();
-	mat(2,2) = -f.z();
-	mat(3,0) = -dot(s, eye);
-	mat(3,1) = -dot(u, eye);
-	mat(3,2) = dot(f, eye);
-}
 
+	mat(0,0) = side.x();
+	mat(0,1) = side.y();
+	mat(0,2) = side.z();
+
+	mat(1,0) = up.x();
+	mat(1,1) = up.y();
+	mat(1,2) = up.z();
+
+	mat(2,0) = forward.x();
+	mat(2,1) = forward.y();
+	mat(2,2) = forward.z();
+
+	mat(3,0) = -side.dot(eye);
+	mat(3,1) = -up.dot(eye);
+	mat(3,2) = forward.dot(eye);
+}
+inline void genProjection(Matrix4f& mat, float fovy, float aspect, float zNear, float zFar)
+{
+	float range   =   tan( DEG2RAD(fovy * 0.5f) ) * zNear;
+	float left    =   - range * aspect;
+	float right   =   range * aspect;
+	float bottom  =   - range;
+	float top     =   range;
+
+	mat = Matrix4fIdentity;
+	mat(0,0) = (2.f * zNear) / (right - left);
+	mat(1,1) = (2.f * zNear) / (top - bottom);
+	mat(2,2) = - (zFar + zNear) / (zFar - zNear);
+	mat(3,3) = 0.f;
+
+	mat(0,2) = (right + left) / (right - left);
+	mat(1,2) = (top + bottom) / (top - bottom);
+
+	mat(3,2) = - 1.f;
+	mat(2,3) = - (2.f * zFar * zNear) / (zFar - zNear);
+}
 }
 #endif

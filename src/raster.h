@@ -139,7 +139,11 @@ private:
 	Rgba _color;
 private:
 	Image* _texture;
-	Matrix3f _matModel;
+	Matrix4f _matModel;
+	Matrix4f _matView;
+	Matrix4f _matProj;
+	Matrix4f _matProjView;
+	Vector2f _viewPort;
 
 	DataElementDes 	_positionPointer;
 	DataElementDes 	_colorPointer;
@@ -184,14 +188,44 @@ public:
 	{
 		_texture    =   image;
 	}
-	void loadMatrix(const Matrix3f& mat)
+
+	void loadModelMatrix(const Matrix4f& mat)
 	{
-		_matModel   =   mat;
+		_matModel = mat;
+	}
+	void loadModelIdentity()
+	{
+		_matModel = Matrix4fIdentity;
+	}
+	void loadViewMatrix(const Matrix4f& mat)
+	{
+		_matView =   mat;
+	}
+	void loadViewIdentity()
+	{
+		_matView = Matrix4fIdentity;
+	}
+	void loadProjMatrix(const Matrix4f& mat)
+	{
+		_matProj =   mat;
+	}
+	void loadProjIdentity()
+	{
+		_matProj = Matrix4fIdentity;
 	}
 
-	void loadIdentity()
+	void setPerspective( float fovy, float aspect, float zNear, float zFar )
 	{
-		_matModel = Matrix3fIdentity;
+		genProjection(_matProj, fovy, aspect, zNear, zFar);
+	}
+	void lookat( const Vector3f& eye, const Vector3f& center,const Vector3f& up )
+	{
+		genLookat(_matView, eye, center, up);
+	}
+	void setViewPort( int32 x, int32 y, int32 w, int32 h )
+	{
+		_viewPort.x() = w;
+		_viewPort.y() = h;
 	}
 
 	void drawArrays(DrawMode mode, const Point2f* points, int32 count);
@@ -237,6 +271,7 @@ public:
 
 	void drawImageScale(int32 dstX, int32 dstY, int32 dstW, int32 dstH, const Image* image);
 private:
+	bool piplineTrasform(Vector4f& pos);
 	void drawPoint(const Point2f& p, Rgba color) { drawPoint(p.x(), p.y(), color, 1); }
 	void drawLine(const Point2f& p1, const Point2f& p2, Rgba color1, Rgba color2);
 	inline Rgba getPixel(uint32 x,uint32 y)
