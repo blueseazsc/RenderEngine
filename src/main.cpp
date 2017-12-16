@@ -40,7 +40,7 @@ public:
 		}
 
 		_gRaster.setViewPort(0,0,_info.winWidth,_info.winHeight);
-		_gRaster.setPerspective(60,(float)(_info.winWidth)/(float)(_info.winHeight),0.1,1000);
+		_gRaster.setPerspective(60,(float)(_info.winWidth)/(float)(_info.winHeight),0.1,20);
 		return true;
 	}
 	virtual void render() 
@@ -49,10 +49,28 @@ public:
 
 		Vertex  vertexs[]   =
 		{
-			{-1.0f, 0.0f,   -2.0f,   0.0f,   0.0f,   render::Rgba(255,0,0,255)},
-			{0.0f,  1.0f,   -9.0f,   1.0f,   1.0f,   render::Rgba(0,255,0,255)},
-			{1.0f, 0.0f,    -2.0f,   1.0f,   0.0f,   render::Rgba(0,0,255,255)},
+			{0.0f, 1.0f,   -5.0f,   0.0f,   0.0f,   render::Rgba(255,0,0,255)},
+			{-1.0f, -1.0f,   -5.0f,   1.0f,   1.0f,   render::Rgba(0,255,0,255)},
+			{1.0f, -1.0f,    -5.0f,   1.0f,   0.0f,   render::Rgba(0,0,255,255)},
 		};
+
+		render::Matrix4f   matScale;
+		render::Matrix4f   matRot;
+		render::Matrix4f   matTrans;
+		render::Matrix4f   matAll;
+
+		static float angle = 0;
+		render::genRotateZ(matRot, angle);
+		angle += 3.0f;
+
+		static float z = 0;
+		render::genTranslate(matTrans, 0,0,z);
+		z -= 0.1f;
+
+		render::genScale(matScale, 0.5,1,1);
+
+		matAll  =  matRot *  matScale * matTrans;
+		_gRaster.loadModelMatrix(matAll);
 
 		_image3->setWrapType(render::IWT_DUP);
 
