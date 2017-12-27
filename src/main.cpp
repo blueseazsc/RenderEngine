@@ -18,21 +18,21 @@ public:
 public:
 	virtual bool startup() 
 	{
-	 	_image =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/bg.png");
+	 	_image =  render::Image::loadFromFile(_gFormat, "../resources/bg.png");
 		if ( _image == nullptr ) 
 		{
 			std::cerr << "image load failed!" << std::endl;
 			return false;
 		}
-		// _image2 =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/colorKey.png");
-		_image2 =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/grass.png");
+		// _image2 =  render::Image::loadFromFile(_gFormat, "../resources/colorKey.png");
+		_image2 =  render::Image::loadFromFile(_gFormat, "../resources/grass.png");
 		if ( _image2 == nullptr ) 
 		{
 			std::cerr << "image load failed!" << std::endl;
 			return false;
 		}
 
-		_image3 =  render::Image::loadFromFile(_gFormat, "/Users/zhangsc/Downloads/image/scale.jpg");
+		_image3 =  render::Image::loadFromFile(_gFormat, "../resources/scale.jpg");
 		if ( _image3 == nullptr ) 
 		{
 			std::cerr << "image load failed!" << std::endl;
