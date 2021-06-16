@@ -1,2 +1,3 @@
 build
 .vim
+.ccls-cache
