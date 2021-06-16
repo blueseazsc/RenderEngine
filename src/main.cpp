@@ -18,7 +18,7 @@ public:
 public:
 	virtual bool startup() 
 	{
-	 	_image =  render::Image::loadFromFile(_gFormat, "../resources/bg.png");
+	 	_image =  render::Image::loadFromFile(_gFormat, "../resources/bg.jpeg");
 		if ( _image == nullptr ) 
 		{
 			std::cerr << "image load failed!" << std::endl;
